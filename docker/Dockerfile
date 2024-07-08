@@ -1,7 +1,10 @@
 FROM nvidia/cuda:12.4.1-devel-ubuntu20.04
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
     curl \
+    libssl-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
