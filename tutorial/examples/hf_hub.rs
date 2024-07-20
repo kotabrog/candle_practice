@@ -1,5 +1,5 @@
-use hf_hub::api::sync::Api;
 use candle_core::Device;
+use hf_hub::api::sync::Api;
 
 fn main() {
     let api = Api::new().unwrap();

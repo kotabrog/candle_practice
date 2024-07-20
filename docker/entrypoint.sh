@@ -8,10 +8,15 @@ INTERACTIVE=$3
 if [ -d "/workspace/$CRATE" ]; then
   echo "cd /workspace/$CRATE"
   cd "/workspace/$CRATE"
-  echo "Building $TARGET_EXAMPLE"
-  cargo build --release --example $TARGET_EXAMPLE
-  echo "Running $TARGET_EXAMPLE"
-  cargo run --release --example $TARGET_EXAMPLE
+  if [ "$TARGET_EXAMPLE" == "test" ]; then
+    echo "Testing $CRATE"
+    cargo test --release
+  else
+    echo "Building $TARGET_EXAMPLE"
+    cargo build --release --example $TARGET_EXAMPLE
+    echo "Running $TARGET_EXAMPLE"
+    cargo run --release --example $TARGET_EXAMPLE
+  fi
 else
   echo "Directory /workspace/$CRATE does not exist."
   exit 1

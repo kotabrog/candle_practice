@@ -1,6 +1,6 @@
+use candle_core::{DType, Device, Result, Tensor, D};
+use candle_nn::{Conv2d, Dropout, Linear, ModuleT, Optimizer, VarBuilder, VarMap};
 use rand::prelude::*;
-use candle_core::{Device, DType, Tensor, Result, D};
-use candle_nn::{Conv2d, Linear, Dropout, VarMap, VarBuilder, ModuleT, Optimizer};
 
 const LABELS: usize = 10;
 const BSIZE: usize = 64;

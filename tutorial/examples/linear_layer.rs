@@ -1,10 +1,10 @@
 use candle_core::{Device, Result, Tensor};
 
-struct Linear{
+struct Linear {
     weight: Tensor,
     bias: Tensor,
 }
-impl Linear{
+impl Linear {
     fn forward(&self, x: &Tensor) -> Result<Tensor> {
         let x = x.matmul(&self.weight)?;
         x.broadcast_add(&self.bias)
@@ -32,11 +32,11 @@ fn main() -> Result<()> {
 
     // Creating a dummy model
     let weight = Tensor::randn(0f32, 1.0, (784, 100), &device)?;
-    let bias = Tensor::randn(0f32, 1.0, (100, ), &device)?;
-    let first = Linear{weight, bias};
+    let bias = Tensor::randn(0f32, 1.0, (100,), &device)?;
+    let first = Linear { weight, bias };
     let weight = Tensor::randn(0f32, 1.0, (100, 10), &device)?;
-    let bias = Tensor::randn(0f32, 1.0, (10, ), &device)?;
-    let second = Linear{weight, bias};
+    let bias = Tensor::randn(0f32, 1.0, (10,), &device)?;
+    let second = Linear { weight, bias };
     let model = Model { first, second };
 
     let dummy_image = Tensor::randn(0f32, 1.0, (1, 784), &device)?;

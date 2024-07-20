@@ -1,4 +1,4 @@
-.PHONY: build run_it run docker_start
+.PHONY: build run_it run fmt docker_start
 
 build:
 	docker build -f docker/Dockerfile -t my-rust-candle-app .
@@ -26,6 +26,18 @@ run_classification: run
 
 run_classification_it: CRATE=classification
 run_classification_it: run_it
+
+run_classification_test: CRATE=classification
+run_classification_test: EXAMPLE=test
+run_classification_test: run
+
+run_classification_test_it: CRATE=classification
+run_classification_test_it: EXAMPLE=test
+run_classification_test_it: run_it
+
+fmt:
+	cd tutorial && cargo fmt
+	cd classification && cargo fmt
 
 docker_start:
 	sudo service docker start
