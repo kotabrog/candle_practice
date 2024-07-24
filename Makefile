@@ -6,12 +6,14 @@ build:
 run:
 	docker run --gpus all --rm \
 		-v $(PWD):/workspace \
+		-v ~/.cache/candle_ext:/root/.cache/candle_ext \
 		-w /workspace \
 		my-rust-candle-app $(CRATE) $(EXAMPLE)
 
 run_it:
 	docker run --gpus all --rm -it \
 		-v $(PWD):/workspace \
+		-v ~/.cache/candle_ext:/root/.cache/candle_ext \
 		-w /workspace \
 		my-rust-candle-app $(CRATE) $(EXAMPLE) interactive
 

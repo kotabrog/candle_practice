@@ -1,17 +1,27 @@
+pub mod mnist;
+
 use anyhow::Result;
 use candle_core::{Device, Tensor};
 use candle_datasets::vision::Dataset;
 use std::{collections::HashMap, path::Path};
 
-pub trait CashDataset {
-    fn save_cash<P: AsRef<Path>>(&self, file_path: P) -> Result<()>;
-    fn load_cash<P: AsRef<Path>>(file_path: P, device: &Device) -> Result<Self>
+pub trait CacheDataset {
+    fn save_cache<P: AsRef<Path>>(&self, file_path: P) -> Result<()>;
+    fn load_cache<P: AsRef<Path>>(file_path: P, device: &Device) -> Result<Self>
     where
         Self: Sized;
 }
 
-impl CashDataset for Dataset {
-    fn save_cash<P: AsRef<Path>>(&self, file_path: P) -> Result<()> {
+impl CacheDataset for Dataset {
+    fn save_cache<P: AsRef<Path>>(&self, file_path: P) -> Result<()> {
+        fn make_dir<P: AsRef<Path>>(file_path: P) -> Result<()> {
+            let file_path = file_path.as_ref();
+            if let Some(parent) = file_path.parent() {
+                std::fs::create_dir_all(parent)?;
+            }
+            Ok(())
+        }
+        make_dir(&file_path)?;
         let file_path = file_path.as_ref();
         let data = vec![
             ("train_images", self.train_images.clone()),
@@ -25,7 +35,7 @@ impl CashDataset for Dataset {
         Ok(candle_core::safetensors::save(&data, file_path)?)
     }
 
-    fn load_cash<P: AsRef<Path>>(file_path: P, device: &Device) -> Result<Self>
+    fn load_cache<P: AsRef<Path>>(file_path: P, device: &Device) -> Result<Self>
     where
         Self: Sized,
     {
@@ -81,7 +91,7 @@ mod tests {
             labels: 10,
         };
         let file_path = PathBuf::from("test_save_dataset.pt");
-        dataset.save_cash(&file_path).unwrap();
+        dataset.save_cache(&file_path).unwrap();
         fs::remove_file(&file_path).unwrap();
         Ok(())
     }
@@ -101,8 +111,8 @@ mod tests {
             labels: 10,
         };
         let file_path = PathBuf::from("test_load_dataset.pt");
-        dataset.save_cash(&file_path).unwrap();
-        let loaded_dataset = Dataset::load_cash(&file_path, &dev).unwrap();
+        dataset.save_cache(&file_path).unwrap();
+        let loaded_dataset = Dataset::load_cache(&file_path, &dev).unwrap();
         fs::remove_file(&file_path).unwrap();
         assert_eq_tensor(&dataset.train_images, &loaded_dataset.train_images)?;
         assert_eq_tensor(&dataset.train_labels, &loaded_dataset.train_labels)?;
@@ -111,15 +121,4 @@ mod tests {
         assert_eq!(dataset.labels, loaded_dataset.labels);
         Ok(())
     }
-
-    // #[test]
-    // fn test_mnist() -> Result<()> {
-    //     let m = candle_datasets::vision::mnist::load()?;
-    //     println!("train-images: {:?}", m.train_images.shape());
-    //     println!("train-labels: {:?}", m.train_labels.shape());
-    //     println!("test-images: {:?}", m.test_images.shape());
-    //     println!("test-labels: {:?}", m.test_labels.shape());
-    //     println!("labels: {:?}", m.labels);
-    //     panic!()
-    // }
 }

@@ -25,4 +25,28 @@ mod tests {
         assert_eq_tensor(&t1, &t2)?;
         Ok(())
     }
+
+    #[test]
+    #[should_panic]
+    fn test_assert_eq_tensor_fail_value() {
+        let t1 = Tensor::from_slice(&[1.0, 2.0, 3.0], (3, 1, 1, 1), &Device::Cpu).unwrap();
+        let t2 = Tensor::from_slice(&[1.0, 2.0, 4.0], (3, 1, 1, 1), &Device::Cpu).unwrap();
+        assert_eq_tensor(&t1, &t2).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_assert_eq_tensor_fail_shape() {
+        let t1 = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], (3, 1, 2, 1), &Device::Cpu).unwrap();
+        let t2 = Tensor::from_slice(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], (3, 1, 1, 2), &Device::Cpu).unwrap();
+        assert_eq_tensor(&t1, &t2).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_assert_eq_tensor_fail_dtype() {
+        let t1 = Tensor::from_slice(&[1.0, 2.0, 3.0], (3, 1, 1, 1), &Device::Cpu).unwrap();
+        let t2 = Tensor::from_slice(&[1 as i64, 2, 3], (3, 1, 1, 1), &Device::Cpu).unwrap();
+        assert_eq_tensor(&t1, &t2).unwrap();
+    }
 }
